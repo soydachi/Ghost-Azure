@@ -57,3 +57,9 @@ typings/
 # dotenv environment variables file
 .env
 
+
+core/built/
+
+content/data/ghost\.db
+
+content/settings/routes\.yaml
