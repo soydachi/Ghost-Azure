@@ -1,78 +1,20 @@
-/**
- * Infinite Scroll
- */
-
-(function(window, document) {
-    // next link element
-    var nextElement = document.querySelector('link[rel=next]');
-    if (!nextElement) return;
-
-    // post feed element
-    var feedElement = document.querySelector('.post-feed');
-    if (!feedElement) return;
-
-    var buffer = 300;
+// Code snippet inspired by https://github.com/douglasrodrigues5/ghost-blog-infinite-scroll
+$(function ($) {
+    var currentPage = 1;
+    var pathname = window.location.pathname;
+    var $document = $(document);
+    var $result = $('.post-feed');
+    var buffer = 200;
 
     var ticking = false;
-    var loading = false;
+    var isLoading = false;
 
     var lastScrollY = window.scrollY;
     var lastWindowHeight = window.innerHeight;
-    var lastDocumentHeight = document.documentElement.scrollHeight;
+    var lastDocumentHeight = $document.height();
 
-    function onPageLoad() {
-        if (this.status === 404) {
-            window.removeEventListener('scroll', onScroll);
-            window.removeEventListener('resize', onResize);
-            return;
-        }
-
-        // append contents
-        var postElements = this.response.querySelectorAll('.post-card');
-        postElements.forEach(function (item) {
-            feedElement.appendChild(item);
-        });
-
-        // set next link
-        var resNextElement = this.response.querySelector('link[rel=next]');
-        if (resNextElement) {
-            nextElement.href = resNextElement.href;
-        } else {
-            window.removeEventListener('scroll', onScroll);
-            window.removeEventListener('resize', onResize);
-        }
-
-        // sync status
-        lastDocumentHeight = document.documentElement.scrollHeight;
-        ticking = false;
-        loading = false;
-    }
-
-    function onUpdate() {
-        // return if already loading
-        if (loading) return;
-
-        // return if not scroll to the bottom
-        if (lastScrollY + lastWindowHeight <= lastDocumentHeight - buffer) {
-            ticking = false;
-            return;
-        }
-
-        loading = true;
-
-        var xhr = new window.XMLHttpRequest();
-        xhr.responseType = 'document';
-
-        xhr.addEventListener('load', onPageLoad);
-
-        xhr.open('GET', nextElement.href);
-        xhr.send(null);
-    }
-
-    function requestTick() {
-        ticking || window.requestAnimationFrame(onUpdate);
-        ticking = true;
-    }
+    // remove hash params from pathname
+    pathname = pathname.replace(/#(.*)$/g, '').replace('/\//g', '/');
 
     function onScroll() {
         lastScrollY = window.scrollY;
@@ -81,12 +23,65 @@
 
     function onResize() {
         lastWindowHeight = window.innerHeight;
-        lastDocumentHeight = document.documentElement.scrollHeight;
+        lastDocumentHeight = $document.height();
         requestTick();
     }
 
-    window.addEventListener('scroll', onScroll, { passive: true });
+    function requestTick() {
+        if (!ticking) {
+            requestAnimationFrame(infiniteScroll);
+        }
+        ticking = true;
+    }
+
+    function infiniteScroll() {
+        // return if already loading
+        if (isLoading) {
+            return;
+        }
+
+        // return if not scroll to the bottom
+        if (lastScrollY + lastWindowHeight <= lastDocumentHeight - buffer) {
+            ticking = false;
+            return;
+        }
+
+        // return if currentPage is the last page already
+        if (currentPage === maxPages) {
+            return;
+        }
+
+        isLoading = true;
+
+        // next page
+        currentPage++;
+
+        // Load more
+        var nextPage = pathname + 'page/' + currentPage + '/';
+
+        $.get(nextPage, function (content) {
+            var parse = document.createRange().createContextualFragment(content);
+            var posts = parse.querySelectorAll('.post');
+            if (posts.length) {
+                [].forEach.call(posts, function (post) {
+                    $result[0].appendChild(post);
+                });
+            }
+        }).fail(function (xhr) {
+            // 404 indicates we've run out of pages
+            if (xhr.status === 404) {
+                window.removeEventListener('scroll', onScroll, {passive: true});
+                window.removeEventListener('resize', onResize);
+            }
+        }).always(function () {
+            lastDocumentHeight = $document.height();
+            isLoading = false;
+            ticking = false;
+        });
+    }
+
+    window.addEventListener('scroll', onScroll, {passive: true});
     window.addEventListener('resize', onResize);
 
-    requestTick();
-})(window, document);
+    infiniteScroll();
+});

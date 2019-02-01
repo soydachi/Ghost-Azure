@@ -1,49 +1,36 @@
 {{!< default}}
 
-{{!-- The tag above means: insert everything in this file
-into the {body} of the default.hbs template --}}
-
-<header class="site-header outer">
-    <div class="inner">
-        {{> "site-nav"}}
-    </div>
-</header>
-
-{{!-- Everything inside the #post tags pulls data from the post --}}
 {{#post}}
+{{#has tag="#feature"}}
+    {{!--If post has tag #feature then load in special feature template, else,
+    just carry on and use this regular template below --}}
+    {{> "feature"}}
+{{else}}
 
 <main id="site-main" class="site-main outer">
     <div class="inner">
 
-        <article class="post-full {{post_class}} {{#unless feature_image}}no-image{{/unless}}">
+        <article class="post-full {{post_class}} {{#has tag='#noimg'}}no-image{{else}}{{#unless feature_image}}no-image{{/unless}}{{/has}}">
 
             <header class="post-full-header">
-                <section class="post-full-meta">
+                <div class="post-full-meta">
                     <time class="post-full-meta-date" datetime="{{date format="YYYY-MM-DD"}}">{{date format="D MMMM YYYY"}}</time>
                     {{#primary_tag}}
                         <span class="date-divider">/</span> <a href="{{url}}">{{name}}</a>
                     {{/primary_tag}}
-                </section>
-                <h1 class="post-full-title">{{title}}</h1>
+                </div>
+                <h1 class="post-full-title js-foating-header-trigger js-no-widows">{{title}}</h1>
             </header>
 
+            {{^has tag="#noimg"}}{{!--If post has tag #noimg, then we skip the feature image--}}
             {{#if feature_image}}
-            <figure class="post-full-image">
-                {{!-- This is a responsive image, it loads different sizes depending on device
-                https://medium.freecodecamp.org/a-guide-to-responsive-images-with-ready-to-use-templates-c400bd65c433 --}}
-                <img
-                    srcset="{{img_url feature_image size="s"}} 300w,
-                            {{img_url feature_image size="m"}} 600w,
-                            {{img_url feature_image size="l"}} 1000w,
-                            {{img_url feature_image size="xl"}} 2000w"
-                    sizes="(max-width: 800px) 400px,
-                            (max-width: 1170px) 700px,
-                            1400px"
-                    src="{{img_url feature_image size="xl"}}"
-                    alt="{{title}}"
-                />
+            <figure class="post-full-image" style="background-image: url({{feature_image}})">
+                <div class="post-full-introauthors">
+                    {{> components/author-accordion}}
+                </div>
             </figure>
             {{/if}}
+            {{/has}}
 
             <section class="post-full-content">
                 <div class="post-content">
@@ -51,12 +38,11 @@ into the {body} of the default.hbs template --}}
                 </div>
             </section>
 
-            {{!-- Email subscribe form at the bottom of the page --}}
             {{#if @labs.subscribers}}
             <section class="subscribe-form">
-                <h3 class="subscribe-form-title">Subscribe to {{@site.title}}</h3>
-                <p>Get the latest posts delivered right to your inbox</p>
-                {{subscribe_form placeholder="youremail@example.com"}}
+                <h3 class="subscribe-form-title">Ghost Newsletter</h3>
+                <p>Stay up to date with the latest Ghost news, tutorials and resources. All the best bits, delivered every Sunday.</p>
+                {{> newsletter-form}}
             </section>
             {{/if}}
 
@@ -68,16 +54,26 @@ into the {body} of the default.hbs template --}}
                 default byline. --}}
 
                 {{#has author="count:>1"}}
-                    {{> "byline-multiple"}}
+                    {{> byline-multiple}}
                 {{else}}
-                    {{> "byline-single"}}
+                    {{> byline-single}}
                 {{/has}}
 
             </footer>
 
-            {{!--
+            {{!-- TODO: re-enable once Discourse is set up properly
             <section class="post-full-comments">
-                If you want to embed comments, this is a good place to do it!
+                <div id='discourse-comments'></div>
+
+                <script type="text/javascript">
+                  DiscourseEmbed = { discourseUrl: 'https://forum.ghost.org/',
+                                     discourseEmbedUrl: '{{url absolute="true"}}' };
+                  (function() {
+                    var d = document.createElement('script'); d.type = 'text/javascript'; d.async = true;
+                    d.src = DiscourseEmbed.discourseUrl + 'javascripts/embed.js';
+                    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(d);
+                  })();
+                </script>
             </section>
             --}}
 
@@ -86,65 +82,27 @@ into the {body} of the default.hbs template --}}
     </div>
 </main>
 
-{{!-- Links to Previous/Next posts --}}
-<aside class="read-next outer">
-    <div class="inner">
-        <div class="read-next-feed">
-            {{#if primary_tag}}
-            {{#get "posts" filter="tags:{{primary_tag.slug}}+id:-{{id}}" limit="3" as |related_posts|}}
-                {{#if related_posts}}
-                <article class="read-next-card"
-                    {{#if ../primary_tag.feature_image}}
-                        style="background-image: url({{img_url ../primary_tag.feature_image size="m"}})"
-                    {{else}}
-                        {{#if @site.cover_image}}
-                            style="background-image: url({{img_url @site.cover_image size="m"}})"{{/if}}
-                    {{/if}}
-                >
-                    <header class="read-next-card-header">
-                        <small class="read-next-card-header-sitetitle">&mdash; {{@site.title}} &mdash;</small>
-                        {{#../primary_tag}}
-                        <h3 class="read-next-card-header-title"><a href="{{url}}">{{name}}</a></h3>
-                        {{/../primary_tag}}
-                    </header>
-                    <div class="read-next-divider">{{> "icons/infinity"}}</div>
-                    <div class="read-next-card-content">
-                        <ul>
-                            {{#foreach related_posts}}
-                            <li><a href="{{url}}">{{title}}</a></li>
-                            {{/foreach}}
-                        </ul>
-                    </div>
-                    <footer class="read-next-card-footer">
-                        <a href="{{#../primary_tag}}{{url}}{{/../primary_tag}}">{{plural meta.pagination.total empty='No posts' singular='% post' plural='See all % posts'}} →</a>
-                    </footer>
-                </article>
-                {{/if}}
-            {{/get}}
-            {{/if}}
-
-            {{!-- If there's a next post, display it using the same markup included from - partials/post-card.hbs --}}
-            {{#next_post}}
-                {{> "post-card"}}
-            {{/next_post}}
-
-            {{!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs --}}
-            {{#prev_post}}
-                {{> "post-card"}}
-            {{/prev_post}}
-
-        </div>
-    </div>
-</aside>
+{{!-- Prev/Next post links in the footer, included from includes/related-posts.hbs --}}
+{{> related-posts}}
 
 {{!-- Floating header which appears on-scroll, included from includes/floating-header.hbs --}}
 {{> floating-header}}
 
+{{/has}}
 {{/post}}
 
 {{!-- The #contentFor helper here will send everything inside it up to the matching #block helper found in default.hbs --}}
 {{#contentFor "scripts"}}
 <script>
+
+var images = document.querySelectorAll('.kg-gallery-image img');
+images.forEach(function (image) {
+    var container = image.closest('.kg-gallery-image');
+    var width = image.attributes.width.value;
+    var height = image.attributes.height.value;
+    var ratio = width / height;
+    container.style.flex = ratio + ' 1 0%';
+})
 
 // NOTE: Scroll performance is poor in Safari
 // - this appears to be due to the events firing much more slowly in Safari.
@@ -158,12 +116,14 @@ $(document).ready(function () {
 
     var progressBar = document.querySelector('#reading-progress');
     var header = document.querySelector('.floating-header');
-    var title = document.querySelector('.post-full-title');
+    var title = document.querySelector('.js-foating-header-trigger');
 
     var lastScrollY = window.scrollY;
     var lastWindowHeight = window.innerHeight;
     var lastDocumentHeight = $(document).height();
     var ticking = false;
+
+    var hoverTimeout;
 
     function onScroll() {
         lastScrollY = window.scrollY;
@@ -205,6 +165,31 @@ $(document).ready(function () {
     window.addEventListener('resize', onResize, false);
 
     update();
+
+    $('.author-list-item').hover(function(){
+        var $this = $(this);
+
+        clearTimeout(hoverTimeout);
+
+        $('.author-card').removeClass('hovered');
+        $(this).children('.author-card').addClass('hovered');
+
+    }, function() {
+        var $this = $(this);
+
+        hoverTimeout = setTimeout(function() {
+            $this.children('.author-card').removeClass('hovered');
+        }, 800);
+    });
+
+    $(".js-no-widows").each(function() {
+        var wordArray = $(this).text().split(" ");
+        if (wordArray.length > 1) {
+            wordArray[wordArray.length-2] += "&nbsp;" + wordArray[wordArray.length-1];
+            wordArray.pop();
+            $(this).html(wordArray.join(" "));
+        }
+    });
 
 });
 </script>

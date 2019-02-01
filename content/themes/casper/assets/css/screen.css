@@ -6,8 +6,9 @@ production stylesheet in assets/built/screen.css
 
 1.  Global Styles
 2.  Layout
-3.  Special Templates
+3.  Transparent Head Layout
 4.  Site Header
+    4.1. Tag Header
 5.  Site Navigation
 6.  Post Feed
 7.  Single Post
@@ -18,7 +19,8 @@ production stylesheet in assets/built/screen.css
   7.3. Comments
   7.4. Related Posts
   7.5. Floating Header
-  7.6. Koenig Styles
+  7.6. Feature Post Template
+  7.7. Koenig
 8.  Author Template
 9.  Error Template
 10. Subscribe Overlay
@@ -30,6 +32,7 @@ production stylesheet in assets/built/screen.css
 /* 1. Global - Set up the things
 /* ---------------------------------------------------------- */
 @import "global.css";
+@import "app.css";
 
 body {
     background: #f4f8fb;
@@ -39,8 +42,8 @@ body {
     display: block;
     width: 100%;
     height: 100%;
-    background-position: center center;
     background-size: cover;
+    background-position: center center;
     border-radius: 100%;
 }
 
@@ -57,25 +60,34 @@ body {
 .site-wrapper {
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
+    min-height: calc(100vh - 56px);
+}
+
+@media (max-width: 660px) {
+    .site-wrapper {
+        min-height: calc(100vh - 48px);
+        padding-top: 48px;
+    }
 }
 
 .site-main {
     z-index: 100;
     flex-grow: 1;
+    padding-bottom: 4vw;
 }
 
 /* Full width page blocks */
 .outer {
     position: relative;
-    padding: 0 4vw;
+    padding-left: 4vw;
+    padding-right: 4vw;
 }
 
 /* Centered content container blocks */
 .inner {
-    margin: 0 auto;
-    max-width: 1040px;
     width: 100%;
+    max-width: 1040px;
+    margin: 0 auto;
 }
 
 /* Usage:
@@ -88,19 +100,20 @@ body {
 
 */
 
-/* 3. Special Template Styles
+
+/* 3. Transparent Head - body.gh-head-transparent
 /* ---------------------------------------------------------- */
 
-@media (min-width: 900px) {
-    .home-template .post-feed,
-    .tag-template .post-feed,
-    .author-template .post-feed {
-        margin-top: -70px;
-        padding-top: 0;
-    }
-    .home-template .site-nav {
-        position: relative;
-        top: -70px;
+.gh-head-transparent .gh-head {
+    margin-bottom: -55px;
+}
+.gh-head-transparent .site-header-content {
+    padding: calc(9vw + 55px) 4vw 100px;
+    max-height: none;
+}
+@media (max-width: 600px) {
+    .gh-head-transparent .site-header-content {
+        padding: 50px 4vw;
     }
 }
 
@@ -110,6 +123,7 @@ body {
 
 .site-header {
     position: relative;
+    margin-bottom: -80px;
     padding-top: 12px;
     padding-bottom: 12px;
     color: #fff;
@@ -142,19 +156,26 @@ body {
     background: linear-gradient(rgba(0,0,0,0.1),rgba(0,0,0,0));
 }
 
-.site-header.no-image:before,
-.site-header.no-image:after {
+.site-header.no-cover {
+    color: var(--darkgrey);
+    background: transparent;
+}
+
+.site-header.no-cover:before,
+.site-header.no-cover:after {
     display: none;
 }
 
 .site-header-content {
+    position: relative;
+    z-index: 100;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 10vw 4vw;
     min-height: 200px;
     max-height: 450px;
+    padding: 10vw 4vw;
     text-align: center;
 }
 
@@ -162,7 +183,7 @@ body {
     z-index: 10;
     margin: 0;
     padding: 0;
-    font-size: 3.8rem;
+    font-size: 6rem;
     font-weight: 700;
 }
 
@@ -174,7 +195,8 @@ body {
     z-index: 10;
     margin: 0;
     padding: 5px 0;
-    font-size: 2.2rem;
+    font-family: var(--serif);
+    font-size: 2.4rem;
     font-weight: 300;
     letter-spacing: 0.5px;
     opacity: 0.8;
@@ -190,183 +212,839 @@ body {
 }
 
 
-/* 5. Site Navigation
+/* 4.1. Tag Header
 /* ---------------------------------------------------------- */
 
-.site-nav {
+.tag-header {
     position: relative;
-    z-index: 300;
+    padding-top: 100px;
+    padding-bottom: 60px;
+}
+
+@media (max-width: 650px) {
+    .tag-header {
+        padding-top: 9vw;
+        padding-bottom: 4vw;
+    }
+}
+
+.tag-header-content {
+    position: relative;
+    z-index: 100;
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
-    overflow-y: hidden;
-    height: 40px;
-    font-size: 1.2rem;
 }
 
-.site-nav-left {
-    display: flex;
-    align-items: center;
-    overflow-x: auto;
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
-    margin-right: 10px;
-    padding-bottom: 80px;
-    letter-spacing: 0.4px;
-    white-space: nowrap;
-
-    -ms-overflow-scrolling: touch;
-}
-
-/* Site Nav Hack Explanation (above):
-
-What's happening above it .site-nav-left is set to overflow-x and allow sideways scrolling, so that when there isn't enough space for all nav items (either due to lots of nav items, or a small viewport), you can still scroll side-to-side to reach them.
-
-The knock-on effect of this is ugly browser-scroll bars at the bottom, so 80px of padding-bottom and a 40px fixed height parent (.site-nav) hides that entirely. Slightly hacky code. But nice clean end-result.
-
-*/
-
-.site-nav-logo {
-    flex-shrink: 0;
-    display: block;
-    margin-right: 24px;
-    padding: 11px 0;
-    color: #fff;
-    font-size: 1.7rem;
-    line-height: 1em;
-    font-weight: bold;
+.tag-title {
+    z-index: 10;
+    margin: 0;
+    padding: 0;
+    color: var(--darkgrey);
+    font-size: 4.6rem;
+    font-weight: 700;
     letter-spacing: -0.5px;
 }
 
-.site-nav-logo:hover {
-    text-decoration: none;
-}
-
-.site-nav-logo img {
-    display: block;
-    width: auto;
-    height: 21px;
-}
-
-.nav {
-    display: flex;
-    margin: 0 0 0 -12px;
+.tag-description {
+    z-index: 10;
+    max-width: 680px;
+    margin: 8px 0 0 0;
     padding: 0;
-    list-style: none;
-}
-
-.nav li {
-    display: block;
-    margin: 0;
-    padding: 0;
-    text-transform: uppercase;
-}
-
-.nav li a {
-    display: block;
-    margin: 0;
-    padding: 10px 12px;
-    color: #fff;
+    font-family: var(--serif);
+    font-size: 1.8rem;
+    line-height: 1.5em;
+    font-weight: 300;
+    letter-spacing: -0.2px;
     opacity: 0.8;
 }
 
-.nav li a:hover {
+@media (max-width: 500px) {
+    .tag-header-content {
+        text-align: center;
+    }
+    .tag-title {
+        font-size: 2.8rem;
+    }
+    .tag-description {
+        font-size: 1.6rem;
+    }
+}
+
+/* 5. Site Sections
+/* ---------------------------------------------------------- */
+
+@media (min-width: 795px) {
+    .tag-template.tag-new-things .post-feed .post-card:first-child:not(.no-image) {
+        flex: 1 1 100%;
+        flex-direction: row;
+    }
+
+    .tag-template.tag-new-things .post-feed .post-card:first-child:not(.no-image) .post-card-image-link {
+        position: relative;
+        flex: 1 1 auto;
+        border-radius: 5px 0 0 5px;
+    }
+
+    .tag-template.tag-new-things .post-feed .post-card:first-child:not(.no-image) .post-card-image {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+    }
+
+    .tag-template.tag-new-things .post-feed .post-card:first-child:not(.no-image) .post-card-content {
+        flex: 0 1 357px;
+    }
+
+    .tag-template.tag-new-things .post-feed .post-card:first-child:not(.no-image) h2 {
+        font-size: 2.6rem;
+    }
+
+    .tag-template.tag-new-things .post-feed .post-card:first-child:not(.no-image) p {
+        font-size: 1.8rem;
+        line-height: 1.55em;
+    }
+
+    .tag-template.tag-new-things .post-feed .post-card:first-child:not(.no-image) .post-card-content-link {
+        padding: 30px 40px 0;
+    }
+
+    .tag-template.tag-new-things .post-feed .post-card:first-child:not(.no-image) .post-card-meta {
+        padding: 0 40px 30px;
+    }
+}
+
+.highlight-feed {
+    position: relative;
+    margin: 0 -4vw 0;
+    padding: 40px 4vw 0;
+}
+.gh-head-transparent .highlight-feed {
+    padding-top: 80px;
+}
+@media (max-width: 1180px) {
+    .highlight-feed {
+        padding-top: 0;
+    }
+}
+
+body:not(.gh-head-transparent) .highlight-feed .inner {
+    padding-bottom: 40px;
+    margin-bottom: 60px;
+    border-bottom: color(var(--lightgrey) l(+10%)) 1px solid;
+}
+
+.highlight-feed-cover {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 270px;
+    background: var(--darkgrey) center top;
+    background-size: cover;
+}
+
+.post-feed.highlight-feed-primary  {
+    margin-bottom: -40px;
+}
+
+.highlight-feed-primary aside {
+    flex: 1 1 300px;
+    display: flex;
+    flex-direction: column;
+    margin: 0 20px 40px;
+}
+
+.highlight-feed-primary-widget {
+    display: block;
+    flex: 1 1 auto;
+    overflow: hidden;
+    padding: 25px;
+    margin: 40px 0 0 0;
+    background: #fff center center;
+    background-size: cover;
+    border-radius: 5px;
+    box-shadow: rgba(39,44,49,0.06) 8px 14px 38px, rgba(39, 44, 49, 0.03) 1px 3px 8px;
+    transition: all 0.5s ease;
+}
+
+.highlight-feed-primary-widget:hover {
     text-decoration: none;
-    opacity: 1;
+    box-shadow: rgba(39,44,49,0.07) 8px 28px 50px, rgba(39, 44, 49, 0.04) 1px 6px 12px;
+    transition: all 0.4s ease;
+    transform: translate3D(0, -1px, 0) scale(1.02);
 }
 
-.site-nav-right {
+.highlight-feed-primary-widget:first-child {
+    margin: 0;
+}
+
+.highlight-feed-ad {
     flex-shrink: 0;
     display: flex;
+    flex-direction: column;
+    justify-content: center;
     align-items: center;
+    text-align: center;
+    color: color(var(--midgrey) l(-5%));
+}
+
+.highlight-feed-ad img {
+    flex-shrink: 0;
     height: 40px;
+    width: auto;
 }
 
-.social-links {
-    flex-shrink: 0;
+.highlight-feed-ad p {
+    display: block;
+    margin: 5px 0 0 0;
+    max-width: 220px;
+    font-family: var(--serif);
+    font-size: 1.4rem;
+    line-height: 1.3em;
+}
+
+.highlight-feed-podcast {
+    position: relative;
     display: flex;
+    color: #fff;
+}
+
+.highlight-feed-podcast:before {
+    display: block;
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: linear-gradient(35deg, rgba(0,0,0,0.90) 0%,rgba(0,0,0,0.7) 40%, rgba(0,0,0,0.5) 50%);;
+}
+
+.highlight-feed-podcast-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
     align-items: center;
+    position: relative;
+    z-index: 10;
 }
 
-.social-links a:last-of-type {
-    padding-right: 20px;
+.highlight-feed-podcast-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    text-transform: uppercase;
+    font-size: 1.1rem;
+    line-height: 1em;
+    font-weight: 500;
+    letter-spacing: 2px;
 }
 
-.social-link {
+.highlight-feed-podcast-header .author-list {
+    margin: 0 1px;
+}
+
+.highlight-feed-podcast-header .static-avatar {
+    height: 24px;
+    width: 24px;
+    border-width: 1px;
+    margin: 0 -3px;
+}
+
+.highlight-feed-podcast-header .author-name-tooltip {
+    display: none;
+}
+
+.highlight-feed-podcast-icon {
+    flex-grow: 1;
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.highlight-feed-podcast-icon svg {
+    width: auto;
+    height: 80px;
+    fill: var(--yellow);
+}
+
+.highlight-feed-podcast-title {
+    width: 100%;
     margin: 0;
-    padding: 10px;
-    color: #fff;
-    opacity: 0.8;
+    font-size: 1.6rem;
+    font-weight: 700;
+    line-height: 1.35em;
 }
 
-.social-link:hover {
-    opacity: 1;
+.highlight-feed-secondary .post-card:first-child,
+.highlight-feed-secondary .post-card-excerpt {
+    display: none;
+}
+.highlight-feed-secondary .post-card-content-link {
+    padding: 25px 25px 5px;
+}
+.highlight-feed-primary aside {
+    flex: 1 1 300px;
 }
 
-.social-link svg {
-    height: 1.8rem;
-    fill: #fff;
+@media (min-width: 795px) {
+    .highlight-feed-primary > .post-card:first-child:not(.no-image) {
+        flex: 1 1 660px;
+    }
+    .highlight-feed-primary .post-card:first-child:not(.no-image) .post-card-image {
+        height: 300px;
+    }
 }
 
-.social-link-fb svg {
-    height: 1.5rem;
+@media (max-width: 1090px) {
+    .highlight-feed-primary {
+        flex-direction: column;
+    }
+    .highlight-feed-primary > .post-card:first-child:not(.no-image) {
+        flex: 1 1 auto;
+    }
+    .highlight-feed-primary aside {
+        flex-shrink: 0;
+        flex-direction: row;
+    }
+    .highlight-feed-primary-widget {
+        margin: 0 0 0 40px;
+    }
 }
 
-.social-link-wb svg {
-    height: 1.6rem;
+@media (max-width: 650px) {
+    .highlight-feed-primary-widget:first-child {
+        display: none;
+    }
+    .highlight-feed-primary-widget:last-child {
+        margin: 0;
+    }
 }
 
-.social-link-wb svg path {
-    stroke: #fff;
+
+/* 5. Site Sections
+/* ---------------------------------------------------------- */
+
+.site-section-header {
+    position: relative;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px 0 -20px;
 }
 
-.social-link-rss svg {
-    height: 1.9rem;
+@media (max-width: 650px) {
+    .site-section-header {
+        padding-bottom: 15px;
+    }
 }
 
-.subscribe-button {
-    display: block;
-    padding: 4px 10px;
-    border: #fff 1px solid;
-    color: #fff;
+.site-section-title {
+    margin: 0;
+    font-size: 2.6rem;
+}
+
+.site-section-morelink {
+    display: flex;
+    align-items: center;
+    padding: 5px 0;
+    text-transform: uppercase;
+    font-weight: 500;
+    letter-spacing: 1px;
     font-size: 1.2rem;
+    line-height: 1.2rem;
+}
+
+.site-section-morelink svg {
+    width: 7px;
+    margin-left: 5px;
+    height: auto;
+    stroke-width: 2px;
+}
+
+/* 6. Breakout Section
+/* ---------------------------------------------------------- */
+
+.breakout-section {
+    margin: 40px -4vw 80px;
+    padding: 4vw;
+    color: #fff;
+    background: var(--darkgrey);
+}
+
+
+/* 6. Podcast
+/* ---------------------------------------------------------- */
+
+.page-template.page-podcast {
+    background: color(var(--darkgrey) l(-10%));
+}
+.page-template.page-podcast .site-main {
+    background: transparent;
+}
+.page-template.page-podcast .site-header::before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    content: "";
+    display: block;
+    background: rgba(0,0,0,0.7);
+}
+
+.podcast-title {
+    position: relative;
+    color: #fff;
+    margin: 0;
+    padding: 0;
+    font-size: 7rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.podcast-title::after {
+    display: block;
+    content: "The Podcast";
+    position: absolute;
+    top: 105%;
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--yellow);
+    font-size: 1.4rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 5px;
+}
+
+.podcast-description {
+    margin: 50px auto 30px;
+    font-size: 2.8rem;
+    line-height: 1.5em;
+    font-family: var(--serif);
+    opacity: 0.8;
+}
+
+.podcast-description em {
+    color: var(--yellow);
+}
+
+.podcast-subscribe-buttons {
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.btn-podcast {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    height: 33px;
+    padding: 7px 12px;
+    margin: 5px;
+    color: var(--darkgrey);
     line-height: 1em;
-    border-radius: 10px;
-    opacity: 0.8;
+    background: rgba(255,255,255,0.9);
+    border-radius: 35px;
+    transition: background 0.5s ease;
 }
 
-.subscribe-button:hover {
+.btn-podcast:hover {
+    color: #111;
     text-decoration: none;
-    opacity: 1;
+    background: rgba(255,255,255,1);
+    transition: background 0.3s ease;
 }
 
-.rss-button {
+.btn-podcast img {
+    height: 20px;
+    width: auto;
+    margin: 0 8px 0 0;
+}
+
+.btn-podcast-googleplay img {
+    height: 17px;
+    margin: 0 8px 0 2px;
+}
+
+.btn-podcast-rss img {
+    height: 15px;
+    margin: 0 8px 0 2px;
+}
+
+.podcast-feed {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    max-width: 840px;
+    margin: 0 auto 0;
+    padding: 40px 0 0 0;
+}
+
+.podcast-card {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    margin: 0 20px 30px;
+    background: #fff center center;
+    background-size: cover;
+    border-radius: 5px;
+    box-shadow: rgba(39,44,49,0.06) 8px 14px 38px, rgba(39, 44, 49, 0.03) 1px 3px 8px;
+    transition: all 0.5s ease;
+}
+
+.podcast-card:hover {
+    box-shadow: rgba(39,44,49,0.07) 8px 28px 50px, rgba(39, 44, 49, 0.04) 1px 6px 12px;
+    transition: all 0.4s ease;
+    transform: translate3D(0, -1px, 0) scale(1.02);
+}
+
+.podcast-card-content-link {
+    flex-grow: 1;
+    position: relative;
+    display: block;
+    padding: 25px;
+    color: var(--darkgrey);
+}
+
+.podcast-card-content-link:hover {
+    text-decoration: none;
+}
+
+.podcast-card-title {
+    margin-top: 0;
+}
+
+.podcast-card-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.podcast-card-excerpt {
+    font-family: var(--serif);
+}
+
+.podcast-card-excerpt p {
+    margin-bottom: 2px;
+}
+
+.podcast-card-content .author-list {
+    flex-shrink: 0;
+    margin-left: 40px;
+}
+
+.podcast-card-content .static-avatar {
+    height: 48px;
+    width: 48px;
+}
+
+.podcast-card-content .author-name-tooltip {
+    display: none;
+}
+
+.podcast-lol {
+    max-width: 600px;
+    margin: 2vw auto;
+    text-align: center;
+    font-size: 2rem;
+    line-height: 1.5em;
+    color: rgba(255,255,255,0.3);
+    transition: color 0.5s ease;
+}
+
+.podcast-lol:hover {
+    color: var(--yellow);
+    transition: color 0.3s ease;
+    cursor: cell;
+}
+
+@media (max-width: 600px) {
+    .podcast-title {
+        font-size: 2.4rem;
+    }
+    .podcast-description {
+        font-size: 1.8rem;
+    }
+    .podcast-subscribe-buttons {
+        margin: 20px 0 20px 0;
+    }
+    .podcast-card-content .author-list {
+        flex-shrink: 1;
+    }
+    .podcast-card-content .static-avatar {
+        margin: -10px 0 0 0;
+    }
+}
+
+
+/* 6. Newsletter
+/* ---------------------------------------------------------- */
+
+.page-template.page-newsletter {
+    background: color(var(--whitegrey) l(+5%));
+}
+
+.page-template.page-newsletter .site-header {
+    background: transparent;
+}
+
+.page-template.page-newsletter .site-header-content {
+    padding: 9vw 4vw 30px;
+    max-height: none;
+}
+
+.newsletter-title {
+    position: relative;
+    margin: 0;
+    padding: 0;
+    font-size: 7.2rem;
+    font-weight: 700;
+    color: color(var(--blue) l(-5%));
+    letter-spacing: 2px;
+    text-align: center;
+}
+
+.newsletter-title::before {
+    display: block;
+    content: "";
+    position: absolute;
+    bottom: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 105%;
+    height: 20px;
+    background: color(var(--blue) l(+15%) s(+5%));
+    opacity: 0.2;
+    z-index: -1;
+}
+
+.newsletter-description {
+    max-width: 800px;
+    margin: 40px auto 0;
+    font-size: 2.8rem;
+    line-height: 1.5em;
+    font-family: var(--serif);
+    color: var(--darkgrey);
+    opacity: 0.7;
+}
+
+.page-template.page-newsletter .site-main {
+    padding-top: 80px;
+    background: transparent;
+}
+
+.page-template.page-newsletter .site-main::before {
+    display: block;
+    content: "";
+    position: absolute;
+    bottom: 35vw;
+    left: 0;
+    transform: translateX(-50%) rotate(49deg);
+    width: 43%    ;
+    height: 15vw;
+    background: color(var(--blue) l(+15%) s(+5%));
+    opacity: 0.2;
+}
+
+.page-template.page-newsletter .site-main::after {
+    display: block;
+    content: "";
+    position: absolute;
+    bottom: 30vw;
+    left: 0;
+    transform: translateX(-50%) rotate(49deg);
+    width: 48%    ;
+    height: 15vw;
+    background: color(var(--blue) l(+15%) s(+5%));
+    opacity: 0.2;
+}
+
+.page-template.page-newsletter .kg-card-markdown ul {
+    flex-shrink: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 1.6rem;
+}
+
+.page-template.page-newsletter .kg-card-markdown ul span {
+    font-size: 2rem;
+    vertical-align: middle;
+}
+
+.newsletter-form-container {
+    position: relative;
+    z-index: 900;
+    width: 85%;
+    max-width: 600px;
+    margin: 50px auto 4vw;
+    padding: 30px 50px 40px 50px;
+    background: #fff;
+    border-radius: 10px;
+    transform: scale(1.15);
+    box-shadow: rgba(39,44,49,0.07) 8px 28px 50px, rgba(39, 44, 49, 0.04) 1px 6px 12px;
+}
+
+.newsletter-form {
+    width: 100%;
+}
+
+.newsletter-form-group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.newsletter-form label {
+    display: inline-block;
+    margin: 0 0 5px 0;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 600;
+    color: var(--blue);
+}
+
+.newsletter-form-group .gh-input {
+    width: 100%;
+    margin-right: 10px;
+}
+
+.newsletter-form-group .gh-btn {
+    flex-shrink: 0;
+}
+
+.newsletter-form small {
+    display: block;
+    margin: 10px 0 0 0;
+    font-size: 1rem;
+    line-height: 1.5em;
+    font-weight: 600;
+}
+
+.newsletter-success-message,
+.newsletter-confirmed-message {
+    display: none;
+}
+
+.successfully-subscribed .newsletter-form,
+.successfully-confirmed .newsletter-form {
+    display: none;
+}
+
+.successfully-subscribed .newsletter-success-message {
+    display: block;
+    text-align: center;
+}
+
+.successfully-confirmed .newsletter-confirmed-message {
+    display: block;
+    text-align: center;
+}
+
+.newsletter-quotes {
+    position: relative;
+    z-index: 900;
+    display: flex;
+    margin: 4vw -20px;
+}
+
+.newsletter-quote {
+    flex: 1 1 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 20px 40px;
+    text-align: center;
+}
+
+.newsletter-quote img {
+    display: block;
+    width: 105px;
+    height: 105px;
+    border: #fff 5px solid;
+    border-radius: 100%;
+}
+
+.newsletter-quote h3 {
+    margin: 10px 0 0 0;
+    font-size: 2.8rem;
+    font-weight: 700;
+}
+
+.newsletter-quote-desc {
+    margin: 6px 0 0 0;
+    text-transform: uppercase;
+    font-size: 1.3rem;
+    line-height: 1.3em;
+    font-weight: 500;
+    letter-spacing: 3px;
+    color: var(--blue);
+}
+
+.newsletter-quote blockquote {
+    margin: 20px 0 0 0;
+    padding: 0;
+    border: 0;
+    font-size: 1.9rem;
+    line-height: 1.6em;
+    font-family: var(--serif);
     opacity: 0.8;
 }
 
-.rss-button:hover {
-    opacity: 1;
+@media (max-width: 800px) {
+    .newsletter-title {
+        font-size: 8vw;
+    }
+    .newsletter-description {
+        font-size: 2rem;
+    }
+    .newsletter-quote:last-child {
+        display: none;
+    }
 }
 
-.rss-button svg {
-    margin-bottom: 1px;
-    height: 2.1rem;
-    fill: #fff;
-}
+@media (max-width: 650px) {
+    .page-template.page-newsletter .site-header-content {
+        padding: 50px 4vw 30px;
+    }
+    .page-template.page-newsletter .kg-card-markdown li {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        max-width: 250px;
+        margin: 20px auto;
+    }
+    .page-template.page-newsletter .kg-card-markdown ul span {
+        font-size: 3.5rem;
+        line-height: 1em;
+    }
 
-@media (max-width: 700px) {
-    .site-header {
-        padding-right: 0;
-        padding-left: 0;
+    .newsletter-form-container {
+        padding: 6vw 8vw;
     }
-    .site-nav-left {
-        margin-right: 0;
-        padding-left: 4vw;
+    .newsletter-form-group {
+        flex-direction: column;
     }
-    .site-nav-right {
+    .newsletter-form-group .gh-input {
+        margin: 0 0 10px 0;
+    }
+    .newsletter-form-group .gh-btn {
+        width: 100%;
+        margin-bottom: 5px;
+    }
+
+    .newsletter-quotes {
+        margin-top: 60px;
+    }
+    .newsletter-quote:first-child {
         display: none;
     }
 }
@@ -387,9 +1065,9 @@ The knock-on effect of this is ugly browser-scroll bars at the bottom, so 80px o
     flex: 1 1 300px;
     display: flex;
     flex-direction: column;
+    min-height: 300px;
     overflow: hidden;
     margin: 0 20px 40px;
-    min-height: 300px;
     background: #fff center center;
     background-size: cover;
     border-radius: 5px;
@@ -411,15 +1089,15 @@ The knock-on effect of this is ugly browser-scroll bars at the bottom, so 80px o
 }
 
 .post-card-image {
-    width: 100%;
+    width: auto;
     height: 200px;
     background: var(--lightgrey) no-repeat center center;
-    object-fit: cover;
+    background-size: cover;
 }
 
 .post-card-content-link {
-    position: relative;
     flex-grow: 1;
+    position: relative;
     display: block;
     padding: 25px 25px 0;
     color: var(--darkgrey);
@@ -431,12 +1109,12 @@ The knock-on effect of this is ugly browser-scroll bars at the bottom, so 80px o
 
 .post-card-tags {
     display: block;
-    margin-bottom: 4px;
+    margin-bottom: 10px;
     color: var(--midgrey);
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     line-height: 1.15em;
-    font-weight: 500;
-    letter-spacing: 0.5px;
+    font-weight: 600;
+    letter-spacing: 1px;
     text-transform: uppercase;
 }
 
@@ -452,7 +1130,12 @@ The knock-on effect of this is ugly browser-scroll bars at the bottom, so 80px o
 }
 
 .post-card-excerpt {
-    font-family: Georgia, serif;
+    font-family: var(--serif);
+}
+
+.post-card-excerpt p {
+    letter-spacing: normal;
+    line-height: 1.75em;
 }
 
 .post-card-meta {
@@ -462,8 +1145,37 @@ The knock-on effect of this is ugly browser-scroll bars at the bottom, so 80px o
     padding: 0 25px 25px;
 }
 
-.author-profile-image,
-.avatar-wrapper {
+/* Featured Card - using #cover tag */
+.post-card.tag-hash-cover {
+    position: relative;
+    background-color: var(--darkgrey);
+}
+.post-card.tag-hash-cover .post-card-content-link {
+    padding-top: 225px;
+    color: #fff;
+    text-align: center;
+}
+.post-card.tag-hash-cover .post-card-title {
+    font-size: 3rem;
+}
+.post-card.tag-hash-cover:before {
+    display: block;
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: linear-gradient(35deg, rgba(0,0,0,0.70) 0%,rgba(0,0,0,0.25) 40%, rgba(0,0,0,0.1) 50%);
+}
+.post-card.tag-hash-cover .post-card-tags,
+.post-card.tag-hash-cover .reading-time {
+    position: relative;
+    z-index: 100;
+    color: rgba(255,255,255,0.6);
+}
+
+.author-profile-image {
     display: block;
     width: 100%;
     height: 100%;
@@ -473,87 +1185,63 @@ The knock-on effect of this is ugly browser-scroll bars at the bottom, so 80px o
     object-fit: cover;
 }
 
-.post-card-meta .profile-image-wrapper,
-.post-card-meta .avatar-wrapper {
-    position: relative;
-}
-
 .author-list {
     display: flex;
     flex-wrap: wrap-reverse;
-    margin: 0;
+    margin: 0 2px;
     padding: 0;
     list-style: none;
 }
 
 .author-list-item {
-    position: relative;
     flex-shrink: 0;
+    position: relative;
     margin: 0;
     padding: 0;
 }
 
-.author-list-item:nth-child(1) {
-    z-index: 10;
-}
-.author-list-item:nth-child(2) {
-    z-index: 9;
-}
-.author-list-item:nth-child(3) {
-    z-index: 8;
-}
-.author-list-item:nth-child(4) {
-    z-index: 7;
-}
-.author-list-item:nth-child(5) {
-    z-index: 6;
-}
-.author-list-item:nth-child(6) {
-    z-index: 5;
-}
-.author-list-item:nth-child(7) {
-    z-index: 4;
-}
-.author-list-item:nth-child(8) {
-    z-index: 3;
-}
-.author-list-item:nth-child(9) {
-    z-index: 2;
-}
-.author-list-item:nth-child(10) {
-    z-index: 1;
-}
+.author-list-item:nth-child(1) { z-index: 10; }
+.author-list-item:nth-child(2) { z-index: 9; }
+.author-list-item:nth-child(3) { z-index: 8; }
+.author-list-item:nth-child(4) { z-index: 7; }
+.author-list-item:nth-child(5) { z-index: 6; }
+.author-list-item:nth-child(6) { z-index: 5; }
+.author-list-item:nth-child(7) { z-index: 4; }
+.author-list-item:nth-child(8) { z-index: 3; }
+.author-list-item:nth-child(9) { z-index: 2; }
+.author-list-item:nth-child(10) { z-index: 1; }
 
 .static-avatar {
     display: block;
-    overflow: hidden;
-    margin: 0 -5px;
-    width: 34px;
     height: 34px;
+    width: 34px;
     border: #fff 2px solid;
+    margin: 0 -5px;
     border-radius: 100%;
+    overflow: hidden;
 }
 
 .moving-avatar {
     display: block;
-    overflow: hidden;
-    margin: 0 -6px;
-    width: 56px;
     height: 56px;
-    border: #fff 2px solid;
+    width: 56px;
+    border: #fff 3px solid;
+    margin: 0 -6px;
     border-radius: 100%;
-    transition: all 0.5s cubic-bezier(0.4, 0.01, 0.165, 0.99) 0.7s;
+    overflow: hidden;
+    transition: margin 0.5s cubic-bezier(0.4, 0.01, 0.165, 0.99) 0.7s;
 }
 
 @media (min-width: 800px) {
     .author-list:hover .moving-avatar {
         margin: 0;
-        transition: all 0.3s cubic-bezier(0.4, 0.01, 0.165, 0.99);
+        transition: margin 0.3s cubic-bezier(0.4, 0.01, 0.165, 0.99);
     }
 }
 
 .author-name-tooltip {
     position: absolute;
+    left: -1px;
     bottom: 105%;
     z-index: 999;
     display: block;
@@ -586,64 +1274,13 @@ The knock-on effect of this is ugly browser-scroll bars at the bottom, so 80px o
     flex-shrink: 0;
     margin-left: 20px;
     color: var(--midgrey);
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     line-height: 33px;
-    font-weight: 500;
-    letter-spacing: 0.5px;
+    font-weight: 600;
+    letter-spacing: 1px;
     text-transform: uppercase;
 }
 
-/* Special Styling for home page grid (below):
-
-The first post in the list is styled to be bigger than the others and take over
-the full width of the grid to give it more emphasis. Wrapped in a media query to
-make sure this only happens on large viewports / desktop-ish devices.
-
- */
-
-@media (min-width: 795px) {
-    .post-card-large {
-        flex: 1 1 100%;
-        flex-direction: row;
-    }
-
-    .post-card-large .post-card-image-link {
-        position: relative;
-        flex: 1 1 auto;
-        border-radius: 5px 0 0 5px;
-    }
-
-    .post-card-large .post-card-image {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-    }
-
-    .post-card-large .post-card-content {
-        flex: 0 1 357px;
-    }
-
-    .post-card-large h2 {
-        font-size: 2.6rem;
-    }
-
-    .post-card-large p {
-        font-size: 1.8rem;
-        line-height: 1.55em;
-    }
-
-    .post-card-large .post-card-content-link {
-        padding: 30px 40px 0;
-    }
-
-    .post-card-large .post-card-meta {
-        padding: 0 40px 30px;
-    }
-}
-
-.home-template .site-header:after {
-    display: none;
-}
 
 
 /* Adjust some margins for smaller screens */
@@ -663,7 +1300,6 @@ make sure this only happens on large viewports / desktop-ish devices.
 
 .post-template .site-main,
 .page-template .site-main {
-    padding-bottom: 4vw;
     background: #fff;
 }
 
@@ -674,11 +1310,12 @@ make sure this only happens on large viewports / desktop-ish devices.
 /* ^ Required to make .post-full-content:before/after z-index stacking work */
 
 .post-full-header {
+    max-width: 1040px;
     margin: 0 auto;
     padding: 6vw 3vw 3vw;
-    max-width: 1040px;
     text-align: center;
 }
+
 @media (max-width: 500px) {
     .post-full-header {
         padding: 14vw 3vw 10vw;
@@ -689,9 +1326,11 @@ make sure this only happens on large viewports / desktop-ish devices.
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-bottom: 5px;
     color: var(--midgrey);
-    font-size: 1.4rem;
-    font-weight: 600;
+    font-size: 1.3rem;
+    font-weight: 500;
+    letter-spacing: 1px;
     text-transform: uppercase;
 }
 
@@ -710,82 +1349,76 @@ make sure this only happens on large viewports / desktop-ish devices.
 }
 
 .post-full-image {
-    margin: 0 -10vw -165px;
-    background: var(--lightgrey) center center;
-    border-radius: 5px;
-    overflow: hidden;
-}
-
-.post-full-image img {
+    position: relative;
     width: 100%;
-    height: 800px;
-    object-fit: cover;
+    padding-bottom: 55%;
+    margin: 0;
+    background: var(--lightgrey) center center;
+    background-size: cover;
 }
 
-@media (max-width: 1170px) {
+@media (max-width: 1130px) {
     .post-full-image {
-        margin: 0 -4vw -100px;
+        width: calc(100% + 8vw);
+        padding-bottom: 60%;
+        margin: 0 -4vw;
         border-radius: 0;
-    }
-    .post-full-image img {
-        height: 600px;
-    }
-}
-
-@media (max-width: 800px) {
-    .post-full-image img {
-        height: 400px;
     }
 }
 
 .post-full-content {
     position: relative;
-    margin: 0 auto;
-    padding: 70px 100px 0;
     min-height: 230px;
-    font-family: Georgia, serif;
-    font-size: 2.2rem;
-    line-height: 1.6em;
+    margin: 0 auto;
+    padding: 90px 140px 0;
+    font-family: var(--serif);
+    font-size: 1.9rem;
+    line-height: 1.75em;
     background: #fff;
-}
-
-@media (max-width: 1170px) {
-    .post-full-content {
-        padding: 5vw 7vw 0;
-    }
-}
-@media (max-width: 800px) {
-    .post-full-content {
-        font-size: 1.9rem;
-    }
 }
 
 .post-full-content:before {
     content: "";
     position: absolute;
-    top: 15px;
-    left: -5px;
+    top: -520px;
+    left: -3px;
     z-index: -1;
     display: block;
     width: 20px;
-    height: 200px;
-    background: rgba(39,44,49,0.15);
-    filter: blur(5px);
-    transform: rotate(-5deg);
+    height: 900px;
+    background: rgba(39,44,49,0.08);
+    filter: blur(9px);
+    transform: rotate(-1deg);
 }
 
 .post-full-content:after {
     content: "";
     position: absolute;
-    top: 15px;
-    right: -5px;
+    top: -520px;
+    right: -3px;
     z-index: -1;
     display: block;
     width: 20px;
-    height: 200px;
-    background: rgba(39,44,49,0.15);
-    filter: blur(5px);
-    transform: rotate(5deg);
+    height: 900px;
+    background: rgba(39,44,49,0.08);
+    filter: blur(9px);
+    transform: rotate(1deg);
+}
+
+@media (max-width: 1130px) {
+    .post-full-content {
+        padding: 60px 7vw 0;
+    }
+    .post-full-content:before,
+    .post-full-content:after {
+        display: none;
+    }
+}
+
+@media (max-width: 600px) {
+    .post-full-content {
+        padding: 40px 0 0;
+    }
 }
 
 .no-image .post-full-content {
@@ -822,9 +1455,13 @@ make sure this only happens on large viewports / desktop-ish devices.
     margin: 0;
 }
 
+.post-template .kg-card-markdown > p:first-child {
+    font-size: 1.25em;
+    line-height: 1.65em;
+}
+
 .post-full-content a {
     color: #000;
-    word-break: break-word;
     box-shadow: var(--blue) 0 -1px 0 inset;
 }
 
@@ -850,15 +1487,35 @@ make sure this only happens on large viewports / desktop-ish devices.
 .post-full-content img,
 .post-full-content video {
     display: block;
-    margin: 1.5em auto;
     max-width: 1040px;
     height: auto;
+    margin: 1.5em auto;
 }
 @media (max-width: 1040px) {
     .post-full-content img,
     .post-full-content video {
         width: 100%;
     }
+}
+
+
+/* Image captions
+
+Usage (In Ghost editor):
+
+![img](/some/image.jpg)
+<small>Your image caption</small>
+
+*/
+
+.post-full-content img + br + small,
+.post-full-content .kg-image-card figcaption {
+    display: block;
+    font-style: italic;
+    font-family: var(--sans-serif);
+    font-weight: 500;
+    font-size: 1.3rem;
+    opacity: 0.9;
 }
 
 
@@ -871,26 +1528,13 @@ Usage (In Ghost edtior):
 
 */
 .post-full-content img[src$="#full"] {
-    max-width: none;
     width: 100vw;
+    max-width: none;
 }
 
-
-/* Image captions
-
-Usage (In Ghost editor):
-
-![img](/some/image.jpg)
-<small>Your image caption</small>
-
-*/
-.post-full-content img + br + small {
-    display: block;
-    margin-top: -3em;
-    margin-bottom: 1.5em;
-    text-align: center;
+.post-full-content img[src$="#full"] + br + small {
+    margin-left: 20px;
 }
-
 
 /* Override third party iframe styles */
 .post-full-content iframe {
@@ -924,15 +1568,11 @@ Usage (In Ghost editor):
     border-radius: 3px;
 }
 
-.post-full-content p code {
-    word-break: break-all;
-}
-
 .post-full-content pre {
+    max-width: 100%;
     overflow-x: auto;
     margin: 1.5em 0 3em;
     padding: 20px;
-    max-width: 100%;
     border: color(var(--darkgrey) l(-10%)) 1px solid;
     color: var(--whitegrey);
     font-size: 1.4rem;
@@ -948,7 +1588,7 @@ Usage (In Ghost editor):
     background: transparent;
 }
 
-.post-full-content pre code :not(span) {
+.post-full-content pre code * {
     color: inherit;
 }
 
@@ -957,7 +1597,7 @@ Usage (In Ghost editor):
 }
 
 .post-full-content hr {
-    margin: 4vw 0;
+    margin: calc(4vw - 1.5em) 0 4vw;
 }
 
 .post-full-content hr:after {
@@ -966,9 +1606,9 @@ Usage (In Ghost editor):
     top: -15px;
     left: 50%;
     display: block;
-    margin-left: -10px;
     width: 1px;
     height: 30px;
+    margin-left: -10px;
     background: color(var(--lightgrey) l(+10%));
     box-shadow: #fff 0 0 0 5px;
     transform: rotate(45deg);
@@ -981,7 +1621,7 @@ Usage (In Ghost editor):
 .post-full-content h5,
 .post-full-content h6 {
     color: color(var(--darkgrey) l(-5%));
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    font-family: var(--sans-serif);
 }
 
 .post-full-content h1 {
@@ -989,6 +1629,7 @@ Usage (In Ghost editor):
     font-size: 4.6rem;
     font-weight: 700;
 }
+
 @media (max-width: 500px) {
     .post-full-content h1 {
         font-size: 2.8rem;
@@ -1000,6 +1641,7 @@ Usage (In Ghost editor):
     font-size: 3.6rem;
     font-weight: 700;
 }
+
 @media (max-width: 500px) {
     .post-full-content h2 {
         font-size: 2.6rem;
@@ -1011,6 +1653,7 @@ Usage (In Ghost editor):
     font-size: 2.8rem;
     font-weight: 700;
 }
+
 @media (max-width: 500px) {
     .post-full-content h3 {
         font-size: 2.2rem;
@@ -1022,6 +1665,7 @@ Usage (In Ghost editor):
     font-size: 2.8rem;
     font-weight: 700;
 }
+
 @media (max-width: 500px) {
     .post-full-content h4 {
         font-size: 2.2rem;
@@ -1039,12 +1683,14 @@ Usage (In Ghost editor):
     line-height: 1.35em;
     text-align: center;
 }
+
 @media (min-width: 1180px) {
     .post-full-content h5 {
-        max-width: 1060px;
         width: 100vw;
+        max-width: 1060px;
     }
 }
+
 @media (max-width: 500px) {
     .post-full-content h5 {
         padding: 0 0 0.5em;
@@ -1057,6 +1703,7 @@ Usage (In Ghost editor):
     font-size: 2.3rem;
     font-weight: 700;
 }
+
 @media (max-width: 500px) {
     .post-full-content h6 {
         font-size: 2rem;
@@ -1092,40 +1739,29 @@ Usage (In Ghost editor):
     .post-full-title {
         font-size: 2.9rem;
     }
-    .post-full-image {
-        margin-bottom: 4vw;
-        height: 350px;
-    }
-    .post-full-content {
-        padding: 0;
-    }
-    .post-full-content:before,
-    .post-full-content:after {
-        display: none;
-    }
 }
 
 /* Tables */
 .post-full-content table {
     display: inline-block;
+    width: auto;
+    max-width: 100%;
     overflow-x: auto;
     margin: 0.5em 0 2.5em;
-    max-width: 100%;
-    width: auto;
     border-spacing: 0;
     border-collapse: collapse;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    vertical-align: top;
+    font-family: var(--sans-serif);
     font-size: 1.6rem;
     white-space: nowrap;
-    vertical-align: top;
 }
 
 .post-full-content table {
-    -webkit-overflow-scrolling: touch;
     background: radial-gradient(ellipse at left, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0) 75%) 0 center, radial-gradient(ellipse at right, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0) 75%) 100% center;
-    background-attachment: scroll, scroll;
     background-size: 10px 100%, 10px 100%;
+    background-attachment: scroll, scroll;
     background-repeat: no-repeat;
+    -webkit-overflow-scrolling: touch;
 }
 
 .post-full-content table td:first-child {
@@ -1136,8 +1772,8 @@ Usage (In Ghost editor):
 
 .post-full-content table td:last-child {
     background-image: linear-gradient(to left, rgba(255,255,255, 1) 50%, rgba(255,255,255, 0) 100%);
-    background-position: 100% 0;
     background-size: 20px 100%;
+    background-position: 100% 0;
     background-repeat: no-repeat;
 }
 
@@ -1163,11 +1799,16 @@ Usage (In Ghost editor):
 
 .subscribe-form {
     margin: 1.5em 0;
-    padding: 6.5vw 7vw 7vw;
+    padding: 5.5vw 7vw 6vw;
     border: color(var(--whitegrey) l(+2%)) 1px solid;
     text-align: center;
     background: color(var(--whitegrey) l(+4%));
     border-radius: 7px;
+}
+@media (max-width: 600px) {
+    .subscribe-form {
+        padding: 7vw 7vw 10vw;
+    }
 }
 
 .subscribe-form-title {
@@ -1180,73 +1821,19 @@ Usage (In Ghost editor):
 }
 
 .subscribe-form p {
-    margin-bottom: 1em;
-    color: var(--midgrey);
-    font-size: 2.2rem;
+    max-width: 600px;
+    margin: 0.5em auto 2em;
+    color: color(var(--midgrey) l(-5%));
+    font-family: var(--serif);
+    font-size: 2rem;
     line-height: 1.55em;
-    letter-spacing: 0.2px;
 }
 
 .subscribe-form form {
-    display: flex;
-    justify-content: center;
-    align-items: center;
     margin: 0 auto;
-    max-width: 420px;
-}
-
-.subscribe-form .form-group {
-    flex-grow: 1;
-}
-
-.subscribe-email {
-    display: block;
-    padding: 10px;
-    width: 100%;
-    border: color(var(--lightgrey) l(+7%)) 1px solid;
-    color: var(--midgrey);
-    font-size: 1.8rem;
-    line-height: 1em;
-    font-weight: normal;
-    user-select: text;
-    border-radius: 5px;
-    transition: border-color 0.15s linear;
-
-    -webkit-appearance: none;
-}
-
-.subscribe-email:focus {
-    outline: 0;
-    border-color: color(var(--lightgrey) l(-2%));
-}
-
-.subscribe-form button {
-    display: inline-block;
-    margin: 0 0 0 10px;
-    padding: 0 20px;
-    height: 41px;
-    outline: none;
-    color: #fff;
-    font-size: 1.5rem;
-    line-height: 37px;
-    font-weight: 400;
-    text-align: center;
-    text-shadow: 0 -1px 0 rgba(0,0,0,0.1);
-    background: linear-gradient(
-    color(var(--blue) whiteness(+7%)),
-    color(var(--blue) lightness(-7%) saturation(-10%)) 60%,
-    color(var(--blue) lightness(-7%) saturation(-10%)) 90%,
-    color(var(--blue) lightness(-4%) saturation(-10%))
-    );
-    border-radius: 5px;
-    box-shadow: 0 0 0 1px inset rgba(0,0,0,0.14);
-
-    -webkit-font-smoothing: subpixel-antialiased;
-}
-
-.subscribe-form button:active,
-.subscribe-form button:focus {
-    background: color(var(--blue) lightness(-9%) saturation(-10%));
+    width: 85%;
+    max-width: 400px;
+    transform: scale(1.15);
 }
 
 @media (max-width: 650px) {
@@ -1258,18 +1845,6 @@ Usage (In Ghost editor):
     }
 }
 
-@media (max-width: 500px) {
-    .subscribe-form form {
-        flex-direction: column;
-    }
-    .subscribe-form .form-group {
-        width: 100%;
-    }
-    .subscribe-form button {
-        margin: 10px 0 0 0;
-        width: 100%;
-    }
-}
 
 
 /* 7.2. Post Footer
@@ -1279,9 +1854,9 @@ Usage (In Ghost editor):
     display: flex;
     justify-content: space-between;
     align-items: center;
+    max-width: 760px;
     margin: 0 auto;
     padding: 3vw 0 6vw 0;
-    max-width: 840px;
 }
 
 /* 7.2.1 Single Author Byline
@@ -1291,11 +1866,10 @@ Usage (In Ghost editor):
     display: flex;
 }
 
-.author-card .author-profile-image,
-.author-card .avatar-wrapper {
-    margin-right: 15px;
+.author-card .author-profile-image {
     width: 60px;
     height: 60px;
+    margin-right: 15px;
 }
 
 .author-card-name {
@@ -1316,7 +1890,7 @@ Usage (In Ghost editor):
 .author-card-content p {
     margin: 0;
     color: var(--midgrey);
-    line-height: 1.3em;
+    line-height: 1.5em;
 }
 
 .post-full-footer-right {
@@ -1350,30 +1924,47 @@ Usage (In Ghost editor):
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 20px;
-    padding-top: 40px;
-    border-top: color(var(--lightgrey) l(+10%)) 1px solid;
 }
 
 .post-full-authors-content {
     margin-bottom: 20px;
-}
-
-.post-full-authors-content p {
-    margin-bottom: 0;
+    font-family: var(--sans-serif);
     color: var(--midgrey);
-    font-size: 1.4rem;
+    font-size: 1.3rem;
     letter-spacing: 0.2px;
     text-align: center;
+    font-weight: 600;
+    letter-spacing: 1px;
     text-transform: uppercase;
+}
+
+.post-full-authors-names {
+    display: block;
+    margin-top: 5px;
+    font-family: var(--serif);
+    font-size: 1.5rem;
+    font-style: italic;
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 400;
 }
 
 .post-full-authors-content a {
-    display: inline-block;
     color: color(var(--darkgrey) l(+20%));
-    font-size: 1.4rem;
-    font-weight: 600;
-    text-transform: uppercase;
+}
+
+.post-full-introauthors {
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    z-index: 100;
+    bottom: -38px;
+    width: 100%;
+}
+
+.post-full-introauthors .author-list {
+    justify-content: center;
+    padding: 10px 20px;
 }
 
 .post-full-footer .author-list {
@@ -1383,8 +1974,8 @@ Usage (In Ghost editor):
 
 .author-card .author-profile-image,
 .author-card .avatar-wrapper {
-    position: relative;
     margin-right: 15px;
+    position: relative;
 }
 
 .author-list-item .author-card {
@@ -1393,10 +1984,9 @@ Usage (In Ghost editor):
     left: 50%;
     z-index: 300;
     display: block;
-    margin-left: -160px;
     width: 320px;
+    margin-left: -160px;
     font-size: 1.4rem;
-    letter-spacing: 0.2px;
     background: white;
     border-radius: 6px;
     box-shadow: rgba(39,44,49,0.08) 0 12px 26px, rgba(39, 44, 49, 0.03) 1px 3px 8px;
@@ -1412,9 +2002,9 @@ Usage (In Ghost editor):
     top: 100%;
     left: 50%;
     display: block;
-    margin-left: -12px;
     width: 0;
     height: 0;
+    margin-left: -12px;
     border-top: 12px solid #fff;
     border-right: 12px solid transparent;
     border-left: 12px solid transparent;
@@ -1427,21 +2017,48 @@ Usage (In Ghost editor):
 }
 
 .author-card .basic-info {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 30px 20px 20px 20px;
     color: #fff;
-    background: var(--darkgrey);
+    background: color(var(--darkgrey) l(-5%)) no-repeat center center;
+    background-size: cover;
     border-radius: 6px 6px 0 0;
 }
 
+.author-card .basic-info:before {
+    display: block;
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: linear-gradient(35deg, rgba(0,0,0,0.70) 0%,rgba(0,0,0,0.25) 40%, rgba(0,0,0,0.1) 50%);
+}
+
+.author-card .basic-info .author-profile-image {
+    box-shadow: rgba(255,255,255,0.2) 0 0 0 4px;
+}
+
 .author-card .basic-info h2 {
+    position: relative;
+    z-index: 10;
     margin: 1em 0 0.5em;
 }
 
-.author-card .bio {
-    padding: 20px 20px 0;
+.author-card-bio {
+    padding: 20px;
+    color: var(--darkgrey);
+    text-align: left;
+}
+
+.author-card-bio p {
+    font-family: var(--serif);
+    font-size: 1.5rem;
+    line-height: 1.5em;
 }
 
 @media (max-width: 650px) {
@@ -1478,8 +2095,8 @@ Usage (In Ghost editor):
 /* ---------------------------------------------------------- */
 
 .post-full-comments {
+    max-width: 760px;
     margin: 0 auto;
-    max-width: 840px;
 }
 
 
@@ -1564,9 +2181,8 @@ Usage (In Ghost editor):
 
 .read-next-divider svg {
     width: 40px;
-    fill: transparent;
     stroke: #fff;
-
+    fill: transparent;
     stroke-width: 0.5px;
     stroke-opacity: 0.65;
 }
@@ -1584,8 +2200,8 @@ Usage (In Ghost editor):
     flex-direction: column;
     margin: 0 auto;
     padding: 0;
-    text-align: center;
     list-style: none;
+    text-align: center;
 }
 
 .read-next-card-content li {
@@ -1601,9 +2217,9 @@ Usage (In Ghost editor):
     display: block;
     padding: 20px 0;
     border-bottom: rgba(255,255,255,0.3) 1px solid;
+    vertical-align: top;
     color: #fff;
     font-weight: 500;
-    vertical-align: top;
     transition: opacity 0.3s ease;
 }
 
@@ -1674,8 +2290,8 @@ Usage (In Ghost editor):
 }
 
 .floating-header-logo img {
-    margin: 0 10px 0 0;
     max-height: 20px;
+    margin: 0 10px 0 0;
 }
 
 .floating-header-divider {
@@ -1726,9 +2342,9 @@ Usage (In Ghost editor):
 }
 
 .floating-header-share-label svg {
-    margin: 0 5px 0 10px;
     width: 18px;
     height: 18px;
+    margin: 0 5px 0 10px;
     stroke: rgba(0,0,0,0.7);
     transform: rotate(90deg);
 }
@@ -1832,7 +2448,149 @@ Usage (In Ghost editor):
 }
 
 
-/* 7.6. Koenig Styles
+/* 7.6. Feature Template - Posts tagged with #feature
+/* ---------------------------------------------------------- */
+
+.post-template.tag-hash-feature .site-header {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    width: 100%;
+    min-height: 450px;
+    padding: 65% 0 0 0;
+}
+
+.post-template.-tag-hash-feature .site-header:before {
+    display: block;
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: linear-gradient(35deg, rgba(0,0,0,0.70) 0%,rgba(0,0,0,0.25) 40%, rgba(0,0,0,0.1) 50%);
+}
+
+.post-template.tag-hash-feature .site-header-content {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: 0;
+    padding: 0 4vw;
+}
+
+@media (min-width: 601px) {
+    .post-template.tag-hash-feature .post-full-content {
+        margin-top: -100px;
+    }
+    .post-full-meta {
+        margin-bottom: 15px;
+        font-size: 1.5rem;
+        opacity: 0.8;
+    }
+    .post-feature-title {
+        max-width: 1200px;
+        margin: 0 auto;
+        font-size: 7rem;
+        letter-spacing: 2px;
+        widows: 3;
+    }
+    .post-feature-excerpt {
+        margin: 20px auto;
+        font-size: 2.8rem;
+    }
+}
+
+.post-feature-excerpt {
+    max-width: 760px;
+    line-height: 1.5em;
+    font-family: var(--serif);
+    opacity: 0.8;
+}
+
+.post-feature-authors-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    top: 40px;
+}
+
+.post-template.tag-hash-feature .site-header-content .moving-avatar {
+    height: 80px;
+    width: 80px;
+    margin: 0 -8px;
+}
+
+.post-template.tag-hash-feature .site-header-content .author-list:hover .moving-avatar {
+    margin: 0 -8px;
+}
+
+.post-feature-authors {
+    display: block;
+    margin-top: 10px;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    font-weight: 500;
+    letter-spacing: 1px;
+}
+
+.post-feature-authors em {
+    font-family: var(--serif);
+    text-transform: none;
+}
+
+.post-feature-authors a {
+    color: #fff;
+}
+
+@media (max-width: 1280px) {
+    .post-template.tag-hash-feature .site-header-content {
+        padding-bottom: 4vw;
+    }
+    .post-feature-title {
+        font-size: 5rem;
+    }
+    .post-feature-excerpt {
+        font-size: 2.2rem;
+    }
+    .post-feature-authors-container {
+        top: 30px;
+    }
+}
+
+@media (max-width: 1060px) {
+    .post-template.tag-hash-feature .post-full-content {
+        margin-top: -60px;
+    }
+}
+
+@media (max-width: 920px) {
+    .post-template.tag-hash-feature .site-header-content {
+        padding-bottom: 0;
+    }
+    .post-feature-title {
+        font-size: 4rem;
+    }
+    .post-feature-excerpt {
+        font-size: 2rem;
+    }
+    .post-feature-authors-container {
+        display: none;
+    }
+}
+
+@media (max-width: 650px) {
+    .post-template.tag-hash-feature .post-full-content {
+        margin-top: 0;
+    }
+}
+
+/* 7.7. Koenig Styles
 /* ---------------------------------------------------------- */
 
 .post-content {
@@ -1894,9 +2652,8 @@ Usage (In Ghost editor):
     margin: 0;
 }
 
-
 @media (max-width: 1040px) {
-    .post-full-content .kg-width-full .kg-image {
+    .post-full-content .kg-image-full .kg-image {
         width: 100vw;
     }
 }
@@ -1929,65 +2686,113 @@ Usage (In Ghost editor):
     margin: 0 0 0 0.75em;
 }
 
-.kg-gallery-card + .kg-image-card.kg-width-wide,
-.kg-gallery-card + .kg-gallery-card,
-.kg-image-card.kg-width-wide + .kg-gallery-card,
-.kg-image-card.kg-width-wide + .kg-image-card.kg-width-wide {
-    margin: -2.25em 0 3em;
-}
 
 /* 8. Author Template
 /* ---------------------------------------------------------- */
 
-.site-header-content .author-profile-image {
+.author-template .site-header-content .author-profile-image {
     z-index: 10;
     flex-shrink: 0;
-    margin: 0 0 20px 0;
     width: 100px;
     height: 100px;
-    box-shadow: rgba(255,255,255,0.1) 0 0 0 6px;
+    margin: 0 0 20px 0;
+    box-shadow: rgba(255,255,255,0.2) 0 0 0 6px;
 }
 
-.site-header-content .author-bio {
+.author-template .site-header-content .author-bio {
     z-index: 10;
     flex-shrink: 0;
-    margin: 5px 0 10px 0;
     max-width: 600px;
-    font-size: 2rem;
-    line-height: 1.3em;
+    margin: 0 0 10px 0;
+    font-family: var(--serif);
+    font-size: 2.2rem;
+    line-height: 1.5em;
     font-weight: 300;
     letter-spacing: 0.5px;
     opacity: 0.8;
 }
 
-.site-header-content .author-meta {
+.author-template .site-header-content .author-meta {
     z-index: 10;
     flex-shrink: 0;
     display: flex;
     justify-content: center;
     align-items: center;
     margin: 0 0 10px 0;
-    font-family: Georgia, serif;
+    font-family: var(--serif);
     font-style: italic;
 }
 
-.site-header-content .author-location svg {
+.author-template .site-header-content .author-location svg {
     height: 1.9rem;
     stroke: #fff;
 }
 
-.site-header-content .bull {
+.author-template .site-header-content .bull {
     display: inline-block;
     margin: 0 12px;
     opacity: 0.5;
 }
 
-.site-header-content .social-link:first-of-type {
+.author-template .site-header-content .social-link:first-of-type {
     padding-left: 4px;
 }
 
+.social-links {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+}
+
+.social-links a:last-of-type {
+    padding-right: 20px;
+}
+
+.social-link {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    padding: 10px;
+    color: #fff;
+    opacity: 0.8;
+}
+
+.social-link:hover {
+    opacity: 1;
+}
+
+.social-link svg {
+    height: 1.8rem;
+    fill: #fff;
+}
+
+.social-link-fb svg {
+    height: 1.5rem;
+}
+
+.social-link-wb svg {
+    height: 1.6rem;
+}
+
+.social-link-wb svg path {
+    stroke: #fff;
+}
+
+.social-link-rss svg {
+    height: 1.9rem;
+}
+
+.no-cover .social-link svg {
+    fill: var(--darkgrey);
+}
+
+.no-cover .social-link-wb svg path {
+    stroke: var(--darkgrey);
+}
+
 @media (max-width: 500px) {
-    .site-header-content .author-bio {
+    .author-template .site-header-content .author-bio {
         font-size: 1.8rem;
         line-height: 1.15em;
         letter-spacing: 0;
@@ -2051,230 +2856,4 @@ Usage (In Ghost editor):
 
 .error-template .post-feed {
     padding-top: 0;
-}
-
-
-/* 10. Subscribe Overlay
-/* ---------------------------------------------------------- */
-
-.subscribe-overlay {
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    z-index: 9000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: rgba(0,25,40,0.97);
-    opacity: 0;
-    transition: opacity 200ms ease-in;
-    pointer-events: none;
-
-    backdrop-filter: blur(3px);
-}
-
-.subscribe-overlay:target {
-    opacity: 1;
-    pointer-events: auto;
-}
-
-.subscribe-overlay-content {
-    position: relative;
-    z-index: 9999;
-    margin: 0 0 5vw 0;
-    padding: 4vw;
-    color: #fff;
-    text-align: center;
-}
-
-.subscribe-overlay-logo {
-    position: fixed;
-    top: 23px;
-    left: 30px;
-    height: 30px;
-}
-
-.subscribe-overlay-title {
-    display: inline-block;
-    margin: 0 0 10px 0;
-    font-size: 6rem;
-    line-height: 1.15em;
-}
-
-.subscribe-overlay-description {
-    margin: 0 auto 50px;
-    max-width: 650px;
-    font-family: Georgia, serif;
-    font-size: 3rem;
-    line-height: 1.3em;
-    font-weight: 300;
-    opacity: 0.8;
-}
-
-.subscribe-overlay form {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 0 auto;
-    max-width: 500px;
-}
-
-.subscribe-overlay .form-group {
-    flex-grow: 1;
-}
-
-.subscribe-overlay .subscribe-email {
-    display: block;
-    padding: 14px 20px;
-    width: 100%;
-    border: none;
-    color: var(--midgrey);
-    font-size: 2rem;
-    line-height: 1em;
-    font-weight: normal;
-    letter-spacing: 0.5px;
-    user-select: text;
-    border-radius: 8px;
-    transition: border-color 0.15s linear;
-
-    -webkit-appearance: none;
-}
-
-.subscribe-email:focus {
-    outline: 0;
-    border-color: color(var(--lightgrey) l(-2%));
-}
-
-.subscribe-overlay button {
-    display: inline-block;
-    margin: 0 0 0 15px;
-    padding: 0 25px;
-    height: 52px;
-    outline: none;
-    color: #fff;
-    font-size: 1.7rem;
-    line-height: 37px;
-    font-weight: 400;
-    text-align: center;
-    text-shadow: 0 -1px 0 rgba(0,0,0,0.1);
-    background: linear-gradient(
-    color(var(--blue) whiteness(+7%)),
-    color(var(--blue) lightness(-7%) saturation(-10%)) 60%,
-    color(var(--blue) lightness(-7%) saturation(-10%)) 90%,
-    color(var(--blue) lightness(-4%) saturation(-10%))
-    );
-    border-radius: 8px;
-    box-shadow: 0 0 0 1px inset rgba(0,0,0,0.14);
-
-    -webkit-font-smoothing: subpixel-antialiased;
-}
-
-.subscribe-overlay button:active,
-.subscribe-overlay button:focus {
-    background: color(var(--blue) lightness(-9%) saturation(-10%));
-}
-
-.subscribe-overlay-close {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    display: block;
-}
-
-.subscribe-overlay-close:before {
-    content: "";
-    position: absolute;
-    top: 40px;
-    right: 25px;
-    display: block;
-    width: 30px;
-    height: 2px;
-    background: #fff;
-    opacity: 0.8;
-    transform: rotate(45deg);
-}
-
-.subscribe-overlay-close:after {
-    content: "";
-    position: absolute;
-    top: 40px;
-    right: 25px;
-    display: block;
-    width: 30px;
-    height: 2px;
-    background: #fff;
-    opacity: 0.8;
-    transform: rotate(-45deg);
-}
-
-.subscribe-overlay-close:hover {
-    cursor: default;
-}
-
-
-/* 11. Site Footer
-/* ---------------------------------------------------------- */
-
-.site-footer {
-    position: relative;
-    padding-top: 20px;
-    padding-bottom: 60px;
-    color: #fff;
-    background: color(var(--darkgrey) l(-15%));
-}
-
-.site-footer-content {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: center;
-    color: rgba(255,255,255,0.7);
-    font-size: 1.3rem;
-}
-
-.site-footer-content a {
-    color: rgba(255,255,255,0.7);
-}
-
-.site-footer-content a:hover {
-    color: rgba(255,255,255,1);
-    text-decoration: none;
-}
-
-.site-footer-nav {
-    display: flex;
-}
-
-.site-footer-nav a {
-    position: relative;
-    margin-left: 20px;
-}
-
-.site-footer-nav a:before {
-    content: "";
-    position: absolute;
-    top: 11px;
-    left: -11px;
-    display: block;
-    width: 2px;
-    height: 2px;
-    background: #fff;
-    border-radius: 100%;
-}
-
-.site-footer-nav a:first-of-type:before {
-    display: none;
-}
-
-@media (max-width: 650px) {
-    .site-footer-content {
-        flex-direction: column;
-    }
-    .site-footer-nav a:first-child {
-        margin-left: 0;
-    }
 }
