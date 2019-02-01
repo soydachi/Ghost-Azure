@@ -1,6 +1,6 @@
 {
   "name": "blog",
-  "description": "The Ghost company blog theme which runs on blog.ghost.org and dev.ghost.org",
+  "description": "Dachi Gogotchuri's Blog",
   "version": "4.1.0",
   "engines": {
     "ghost": ">=2.0.0",
@@ -12,9 +12,9 @@
       "zip": "gulp zip"
   },
   "author": {
-    "name": "Ghost Foundation",
-    "email": "hello@ghost.org",
-    "url": "https://ghost.org"
+    "name": "Dachi Gogotchuri",
+    "email": "hola@soydachi.com",
+    "url": "https://soydachi.com"
   },
   "gpm": {
     "type": "theme",
@@ -24,13 +24,13 @@
     ]
   },
   "keywords": [
-    "ghost",
-    "theme",
-    "ghost-theme"
+    "soydachi",
+    "Dachi",
+    "Gogotchuri"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/TryGhost/Blog.git"
+    "url": "https://github.com/soydachi/Ghost-Azure.git"
   },
   "bugs": "https://github.com/TryGhost/Blog/issues",
   "contributors": "https://github.com/TryGhost/Blog/graphs/contributors",
