@@ -69,7 +69,7 @@
                             <img src="{{asset "img/ghostpro.svg"}}" alt="Ghost(Pro)">
                             <p>Spend less time on your server, more time on your site</p>
                         </a> --}}
-                        {{#get "posts" filter="tag:twig" include="authors,tags" limit="1"}}
+                        {{#get "posts" filter="tag:twig" include="authors,tags" limit="2"}}
                         {{#foreach posts}}
                         <a class="highlight-feed-podcast highlight-feed-primary-widget" href="{{url}}" {{#if primary_tag.feature_image}}style="background-image: url({{primary_tag.feature_image}})"{{/if}}>
                             <div class="highlight-feed-podcast-content">
@@ -125,11 +125,11 @@
 
     <div class="inner">
 
-        {{#get "posts" filter="tag:new-things+featured:false" include="authors,tags" limit="3"}}
+        {{#get "posts" filter="tag:cogito-ergo-sum+featured:false" include="authors,tags" limit="3"}}
         <div class="site-section">
             <header class="site-section-header">
-                <h2 class="site-section-title">Product Updates</h2>
-                <a class="site-section-morelink" href="{{@blog.url}}/tag/new-things/">See more {{> "icons/arrow-right-small"}}</a>
+                <h2 class="site-section-title">Existo luego pienso</h2>
+                <a class="site-section-morelink" href="{{@blog.url}}/tag/cogito-ergo-sum/">See more {{> "icons/arrow-right-small"}}</a>
             </header>
             <div class="post-feed">
                 {{#foreach posts}}
@@ -139,11 +139,11 @@
         </div>
         {{/get}}
 
-        {{#get "posts" filter="tag:tutorials+featured:false" include="authors,tags" limit="3"}}
+        {{#get "posts" filter="tag:events+featured:false" include="authors,tags" limit="3"}}
         <div class="site-section">
             <header class="site-section-header">
-                <h2 class="site-section-title">Tutorials</h2>
-                <a class="site-section-morelink" href="{{@blog.url}}/tag/tutorials/">See more {{> "icons/arrow-right-small"}}</a>
+                <h2 class="site-section-title">Eventos</h2>
+                <a class="site-section-morelink" href="{{@blog.url}}/tag/events/">See more {{> "icons/arrow-right-small"}}</a>
             </header>
             <div class="post-feed">
                 {{#foreach posts}}
@@ -153,29 +153,11 @@
         </div>
         {{/get}}
 
-        {{#get "posts" filter="tag:careers" include="authors,tags" limit="3"  as |careers|}}
-        {{#if careers}}
+        {{#get "posts" filter="tag:tech+featured:false" include="authors,tags" limit="3"}}
         <div class="site-section">
             <header class="site-section-header">
-                <h2 class="site-section-title">Careers at Ghost</h2>
-                <a class="site-section-morelink" href="{{@blog.url}}/tag/careers/">See more {{> "icons/arrow-right-small"}}</a>
-            </header>
-            <div class="post-feed">
-
-                {{#foreach posts}}
-                    {{> "post-card"}}
-                {{/foreach}}
-
-            </div>
-        </div>
-        {{/if}}
-        {{/get}}
-
-        {{#get "posts" filter="tag:inside-ghost+featured:false" include="authors,tags" limit="3"}}
-        <div class="site-section">
-            <header class="site-section-header">
-                <h2 class="site-section-title">Behind the Scenes</h2>
-                <a class="site-section-morelink" href="{{@blog.url}}/tag/inside-ghost/">See more {{> "icons/arrow-right-small"}}</a>
+                <h2 class="site-section-title">Cosas sobre tecnología</h2>
+                <a class="site-section-morelink" href="{{@blog.url}}/tag/tech/">See more {{> "icons/arrow-right-small"}}</a>
             </header>
             <div class="post-feed">
                 {{#foreach posts}}
@@ -185,7 +167,7 @@
         </div>
         {{/get}}
 
-        {{#get "posts" filter="tag:writing+featured:false" include="authors,tags" limit="3"}}
+        {{!-- {{#get "posts" filter="tag:writing+featured:false" include="authors,tags" limit="3"}}
         <div class="site-section">
             <header class="site-section-header">
                 <h2 class="site-section-title">Writing Tips</h2>
@@ -197,7 +179,7 @@
                 {{/foreach}}
             </div>
         </div>
-        {{/get}}
+        {{/get}} --}}
 
 
         {{!-- <div class="post-feed">
