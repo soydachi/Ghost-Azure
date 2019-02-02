@@ -61,21 +61,23 @@
 
             </footer>
 
-            {{!-- TODO: re-enable once Discourse is set up properly
             <section class="post-full-comments">
-                <div id='discourse-comments'></div>
-
-                <script type="text/javascript">
-                  DiscourseEmbed = { discourseUrl: 'https://forum.ghost.org/',
-                                     discourseEmbedUrl: '{{url absolute="true"}}' };
-                  (function() {
-                    var d = document.createElement('script'); d.type = 'text/javascript'; d.async = true;
-                    d.src = DiscourseEmbed.discourseUrl + 'javascripts/embed.js';
-                    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(d);
-                  })();
+                <<div id="disqus_thread"></div>
+                    <script>
+                    var disqus_config = function () {
+                        this.page.url = "{{url absolute="true"}}";  
+                        this.page.identifier = "ghost-{{comment_id}}"
+                    };
+                    (function() {
+                    var d = document, s = d.createElement('script');
+                    s.src = 'https://soydachi.disqus.com/embed.js';
+                    s.setAttribute('data-timestamp', +new Date());
+                    (d.head || d.body).appendChild(s);
+                    })();
+                    </script>
                 </script>
             </section>
-            --}}
+           
 
         </article>
 
