@@ -24,7 +24,7 @@
 
             <div class="site-section">
                 <div class="post-feed highlight-feed-primary">
-                    {{#get "posts" filter="featured:true" include="authors,tags" limit="5"}}
+                    {{#get "posts" filter="featured:true" include="authors,tags" limit="2"}}
                     {{#foreach posts}}
                         <article class="post-card {{post_class}}{{#unless feature_image}} no-image{{/unless}}">
 
@@ -76,13 +76,13 @@
                         {{/get}}
                     </aside> --}}
                 </div>
-                {{!-- {{#get "posts" filter="featured:true" include="authors,tags" limit="4"}}
+                {{#get "posts" filter="featured:true" include="authors,tags" limit="3"}}
                 <div class="post-feed highlight-feed-secondary">
                     {{#foreach posts}}
                         {{> "post-card"}}
                     {{/foreach}}
                 </div>
-                {{/get}} --}}
+                {{/get}}
             </div>
 
         </div>
