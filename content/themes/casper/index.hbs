@@ -22,18 +22,9 @@
 
         <div class="inner">
 
-            <div class="post-feed">
-            {{#foreach posts}}
-
-                {{!-- The tag below includes the markup for each post - partials/post-card.hbs --}}
-                {{> "post-card"}}
-
-            {{/foreach}}
-            </div>
-
-            {{!-- <div class="site-section">
+            <div class="site-section">
                 <div class="post-feed highlight-feed-primary">
-                    {{#get "posts" filter="featured:true" include="authors,tags" limit="2"}}
+                    {{#get "posts" filter="featured:true" include="authors,tags" limit="1"}}
                     {{#foreach posts}}
                         <article class="post-card {{post_class}}{{#unless feature_image}} no-image{{/unless}}">
 
@@ -78,21 +69,21 @@
                             <img src="{{asset "img/ghostpro.svg"}}" alt="Ghost(Pro)">
                             <p>Spend less time on your server, more time on your site</p>
                         </a>
-                        {{#get "posts" filter="tag:twig" include="authors,tags" limit="2"}}
+                        {{#get "posts" filter="tag:crossdvlup" include="authors,tags" limit="2"}}
                         {{#foreach posts}}
                             {{> "post-card"}}
                         {{/foreach}}
                         {{/get}}
                     </aside>
                 </div>
-                {{#get "posts" filter="featured:true" include="authors,tags" limit="3"}}
+                {{#get "posts" filter="featured:true" include="authors,tags" limit="4"}}
                 <div class="post-feed highlight-feed-secondary">
                     {{#foreach posts}}
                         {{> "post-card"}}
                     {{/foreach}}
                 </div>
                 {{/get}}
-            </div> --}}
+            </div>
 
         </div>
 
