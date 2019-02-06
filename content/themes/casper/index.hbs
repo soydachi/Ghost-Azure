@@ -22,7 +22,16 @@
 
         <div class="inner">
 
-            <div class="site-section">
+            <div class="post-feed">
+            {{#foreach posts}}
+
+                {{!-- The tag below includes the markup for each post - partials/post-card.hbs --}}
+                {{> "post-card"}}
+
+            {{/foreach}}
+            </div>
+
+            {{!-- <div class="site-section">
                 <div class="post-feed highlight-feed-primary">
                     {{#get "posts" filter="featured:true" include="authors,tags" limit="2"}}
                     {{#foreach posts}}
@@ -64,7 +73,7 @@
                         </article>
                     {{/foreach}}
                     {{/get}}
-                    {{!-- <aside>
+                    <aside>
                         <a class="highlight-feed-ad highlight-feed-primary-widget" href="https://ghost.org/pricing/">
                             <img src="{{asset "img/ghostpro.svg"}}" alt="Ghost(Pro)">
                             <p>Spend less time on your server, more time on your site</p>
@@ -74,7 +83,7 @@
                             {{> "post-card"}}
                         {{/foreach}}
                         {{/get}}
-                    </aside> --}}
+                    </aside>
                 </div>
                 {{#get "posts" filter="featured:true" include="authors,tags" limit="3"}}
                 <div class="post-feed highlight-feed-secondary">
@@ -83,7 +92,7 @@
                     {{/foreach}}
                 </div>
                 {{/get}}
-            </div>
+            </div> --}}
 
         </div>
 
@@ -97,7 +106,7 @@
 
     <div class="inner">
 
-        {{#get "posts" filter="tag:cogito-ergo-sum+featured:false" include="authors,tags" limit="3"}}
+        {{!-- {{#get "posts" filter="tag:cogito-ergo-sum+featured:false" include="authors,tags" limit="3"}}
         <div class="site-section">
             <header class="site-section-header">
                 <h2 class="site-section-title">Existo luego pienso</h2>
@@ -137,7 +146,7 @@
                 {{/foreach}}
             </div>
         </div>
-        {{/get}}
+        {{/get}} --}}
 
         {{!-- {{#get "posts" filter="tag:writing+featured:false" include="authors,tags" limit="3"}}
         <div class="site-section">
