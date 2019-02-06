@@ -65,10 +65,10 @@
                     {{/foreach}}
                     {{/get}}
                     <aside>
-                        <a class="highlight-feed-ad highlight-feed-primary-widget" href="https://ghost.org/pricing/">
+                        {{!-- <a class="highlight-feed-ad highlight-feed-primary-widget" href="https://ghost.org/pricing/">
                             <img src="{{asset "img/ghostpro.svg"}}" alt="Ghost(Pro)">
                             <p>Spend less time on your server, more time on your site</p>
-                        </a>
+                        </a> --}}
                         {{#get "posts" filter="tag:crossdvlup" include="authors,tags" limit="2"}}
                         {{#foreach posts}}
                             {{> "post-card"}}
